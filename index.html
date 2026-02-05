@@ -11,8 +11,8 @@
     height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+    align-items: center;   
+    background: linear-gradient(135deg, #141e30, #243b55);
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
@@ -71,20 +71,26 @@
 
 <body>
   <div class="card">
-    
-    <!-- PAGE 1 -->
-    <h1>Listen.. 👀</h1>
-    <p>I was wondering something…</p>
-    <button class="yes" onclick="goToPage(2)">Yes?</button>
-    </div>
-      <!-- PAGE 2 -->
-    <h2>Will you be my Valentine? 💘</h2>
 
-    <div class="buttons">
-      <button class="no" ontouchstart="moveNo()">No 🙈</button>
-      <button class="yes" onclick="yes()">Yes 💖</button>
+    <!-- PAGE 1 -->
+    <div id="page1">
+      <h1>Hey 👀</h1>
+      <p>I was wondering something…</p>
+      <button class="yes" onclick="goToPage(2)">Yes?</button>
     </div>
+
+    <!-- PAGE 2 -->
+    <div id="page2" style="display:none;">
+      <h2>Will you be my Valentine? 💘</h2>
+
+      <div class="buttons">
+        <button class="no" onmouseover="moveNo()" onclick="moveNo()">No 🙈</button>
+        <button class="yes" onclick="yes()">Yes 💖</button>
+      </div>
+    </div>
+
   </div>
+
 
 <script>
   function moveNo() {
@@ -114,5 +120,6 @@
 </script>
 </body>
 </html>
+
 
 
