@@ -48,7 +48,6 @@
     cursor: pointer;
   }
 
-  /* Page 2 button container */
   .buttons {
     margin-top: 25px;
     position: relative;
@@ -82,9 +81,7 @@
     <div id="page1">
       <h1>Hey 👀</h1>
       <p>I was wondering something…</p>
-      <button class="yes" onclick="goToPage(2)" style="margin-top:20px;">
-        Yes?
-      </button>
+      <button id="page1Yes" style="margin-top:20px;">Yes?</button>
     </div>
 
     <!-- PAGE 2 -->
@@ -92,12 +89,53 @@
       <h2>Will you be my Valentine? 💘</h2>
 
       <div class="buttons">
-        <button class="no" onmouseover="moveNo()" onclick="moveNo()">No 🙈</button>
-        <button class="yes" onclick="yes()">Yes 💖</button>
+        <button class="no" id="noBtn">No 🙈</button>
+        <button class="yes" id="yesBtn">Yes 💖</button>
       </div>
     </div>
 
   </div>
 
 <script>
-  function go
+  // PAGE SWITCH
+  const page1 = document.getElementById("page1");
+  const page2 = document.getElementById("page2");
+
+  document.getElementById("page1Yes").addEventListener("click", () => {
+    page1.style.display = "none";
+    page2.style.display = "block";
+  });
+
+  // NO BUTTON RUNS AWAY
+  const noBtn = document.getElementById("noBtn");
+  noBtn.addEventListener("mouseover", moveNo);
+  noBtn.addEventListener("click", moveNo);
+
+  function moveNo() {
+    const x = Math.random() * 200 - 100;
+    const y = Math.random() * 80;
+    noBtn.style.transition = "transform 0.2s ease";
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  // YES BUTTON FINAL SCREEN
+  document.getElementById("yesBtn").addEventListener("click", () => {
+    document.body.innerHTML = `
+      <div style="
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        flex-direction:column;
+        background:linear-gradient(135deg,#141e30,#243b55);
+        color:white;
+        text-align:center;
+        font-family:-apple-system,sans-serif;">
+        <h1>Lessfuckinggooooooo !!!</h1>
+        <p style="font-size:20px">Next week gonna be amazeballs 😌</p>
+      </div>
+    `;
+  });
+</script>
+</body>
+</html>
