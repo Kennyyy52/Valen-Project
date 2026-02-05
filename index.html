@@ -1,4 +1,4 @@
-<!index html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -11,7 +11,7 @@
     height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;   
+    align-items: center;
     background: linear-gradient(135deg, #141e30, #243b55);
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   }
@@ -23,7 +23,7 @@
     text-align: center;
     width: 85%;
     max-width: 360px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
   }
 
   h1 {
@@ -31,15 +31,13 @@
     margin-bottom: 10px;
   }
 
+  h2 {
+    color: #222;
+  }
+
   p {
     font-size: 16px;
     color: #444;
-  }
-
-  .buttons {
-    margin-top: 25px;
-    position: relative;
-    z-index: 10;
   }
 
   button {
@@ -48,10 +46,17 @@
     border-radius: 30px;
     border: none;
     cursor: pointer;
-    position: absolute;
   }
 
-  .yes {
+  /* Page 2 button container */
+  .buttons {
+    margin-top: 25px;
+    position: relative;
+    height: 120px;
+  }
+
+  .buttons .yes {
+    position: absolute;
     background: #e63946;
     color: white;
     left: 50%;
@@ -59,7 +64,8 @@
     bottom: 0;
   }
 
-  .no {
+  .buttons .no {
+    position: absolute;
     background: #f1f1f1;
     color: #333;
     top: 0;
@@ -76,7 +82,9 @@
     <div id="page1">
       <h1>Hey 👀</h1>
       <p>I was wondering something…</p>
-      <button class="yes" onclick="goToPage(2)">Yes?</button>
+      <button class="yes" onclick="goToPage(2)" style="margin-top:20px;">
+        Yes?
+      </button>
     </div>
 
     <!-- PAGE 2 -->
@@ -91,36 +99,5 @@
 
   </div>
 
-
 <script>
-  function moveNo() {
-    const btn = document.querySelector('.no');
-    const x = Math.random() * 200 - 100;
-    const y = Math.random() * 80;
-    btn.style.transform = `translate(${x}px, ${y}px)`;
-  }
-
-  function yes() {
-    document.body.innerHTML = `
-      <div style="
-        height:100vh;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        flex-direction:column;
-        background:linear-gradient(135deg,#ff758c,#ff7eb3);
-        color:white;
-        text-align:center;
-        font-family:-apple-system,sans-serif;">
-        <h1>Lessfuckinggooooooo !!!</h1>
-        <p style="font-size:20px">Next week gonna be amazeballs</p>
-      </div>
-    `;
-  }
-</script>
-</body>
-</html>
-
-
-
-
+  function go
