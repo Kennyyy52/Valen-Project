@@ -40,8 +40,19 @@
     cursor: pointer;
   }
 
-  .page { position: relative; }
-  .hidden { display: none; pointer-events: none; }
+  /* PAGE TRANSITIONS */
+  .page {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .hidden {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    display: none;
+  }
 
   .buttons {
     margin-top: 25px;
@@ -49,7 +60,18 @@
     height: 120px;
   }
 
-  /* --- NO BUTTON (uses CSS variables) --- */
+  /* YES BUTTON */
+  .buttons .yes {
+    position: absolute;
+    background: #e63946;
+    color: white;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    animation: heartbeat 1.8s infinite ease-in-out;
+  }
+
+  /* NO BUTTON (CSS VARIABLES) */
   .buttons .no {
     --x: 0px;
     --y: 0px;
@@ -69,16 +91,7 @@
     transition: transform 0.25s ease;
   }
 
-  .buttons .yes {
-    position: absolute;
-    background: #e63946;
-    color: white;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 0;
-  }
-
-  /* --- SIDE BUBBLE (also uses CSS variables) --- */
+  /* SIDE CHAT BUBBLE */
   .bubble {
     --scale: 1;
 
@@ -96,6 +109,7 @@
     display: none;
 
     transform: scale(var(--scale)) rotate(-1.5deg);
+    animation: bubblePop 0.3s ease-out;
     transition: transform 0.25s ease, font-weight 0.25s ease;
   }
 
@@ -123,6 +137,34 @@
       border: none;
       border-top: 8px solid #f8f8f8;
     }
+  }
+
+  /* ANIMATIONS */
+  @keyframes bubblePop {
+    0% {
+      transform: scale(0.6) rotate(-1.5deg);
+      opacity: 0;
+    }
+    70% {
+      transform: scale(1.05) rotate(-1.5deg);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(var(--scale)) rotate(-1.5deg);
+    }
+  }
+
+  @keyframes heartbeat {
+    0% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.05); }
+    100% { transform: translateX(-50%) scale(1); }
+  }
+
+  @keyframes panic {
+    0%   { transform: translateX(-50%) scale(var(--scale)); }
+    25%  { transform: translateX(-50%) rotate(-2deg) scale(var(--scale)); }
+    50%  { transform: translateX(-50%) rotate(2deg) scale(var(--scale)); }
+    100% { transform: translateX(-50%) scale(var(--scale)); }
   }
 </style>
 </head>
@@ -180,12 +222,10 @@ document.addEventListener("DOMContentLoaded", () => {
     bubble.innerText = messages[Math.min(noClicks, messages.length - 1)];
     bubble.style.display = "block";
 
-    // Bubble grows & gets bolder
     const bubbleScale = 1 + noClicks * 0.2;
     bubble.style.setProperty("--scale", bubbleScale);
     bubble.style.fontWeight = noClicks >= 2 ? "600" : "400";
 
-    // No button shrinks
     noScale = Math.max(0.45, noScale - 0.15);
     noBtn.style.setProperty("--scale", noScale);
 
@@ -195,6 +235,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   noBtn.addEventListener("mouseover", () => {
     if (!chaosMode) return;
+
+    bubble.innerText = messages[3];
+    bubble.style.display = "block";
+
+    noBtn.style.animation = "panic 0.2s";
+    setTimeout(() => noBtn.style.animation = "", 200);
 
     const x = Math.random() * 200 - 100;
     const y = Math.random() * 80;
