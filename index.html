@@ -25,7 +25,7 @@
     max-width: 360px;
     box-shadow: 0 25px 60px rgba(0,0,0,0.4);
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
 
   h1 { color: #e63946; }
@@ -40,7 +40,6 @@
     cursor: pointer;
   }
 
-  /* PAGE VISIBILITY CONTROL */
   .page {
     position: relative;
     z-index: 1;
@@ -51,7 +50,6 @@
     pointer-events: none;
   }
 
-  /* PAGE 2 BUTTONS */
   .buttons {
     margin-top: 25px;
     position: relative;
@@ -76,20 +74,53 @@
     transform: translateX(-50%);
   }
 
-  /* SPEECH BUBBLE */
+  /* SIDE CHAT BUBBLE */
   .bubble {
     position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #222;
-    color: white;
-    padding: 10px 14px;
-    border-radius: 12px;
+    right: -220px;
+    top: 30px;
+    width: 200px;
+    background: #f8f8f8;
+    color: #333;
+    padding: 12px 14px;
+    border-radius: 14px;
     font-size: 14px;
-    max-width: 280px;
-    z-index: 5;
+    line-height: 1.4;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     display: none;
+    transform: rotate(-1.5deg);
+  }
+
+  /* Bubble tail */
+  .bubble::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 20px;
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 8px solid #f8f8f8;
+  }
+
+  /* Mobile fallback */
+  @media (max-width: 600px) {
+    .bubble {
+      right: 50%;
+      transform: translateX(50%) rotate(-1.5deg);
+      top: -70px;
+    }
+
+    .bubble::before {
+      left: 50%;
+      top: 100%;
+      transform: translateX(-50%);
+      border-right: none;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid #f8f8f8;
+    }
   }
 </style>
 </head>
@@ -101,9 +132,7 @@
   <div id="page1" class="page">
     <h1>Hey 👀</h1>
     <p>I was wondering something…</p>
-    <button id="page1Yes" style="margin-top:20px; z-index:10;">
-      Yes?
-    </button>
+    <button id="page1Yes" style="margin-top:20px;">Yes?</button>
   </div>
 
   <!-- PAGE 2 -->
@@ -122,12 +151,12 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  const page1   = document.getElementById("page1");
-  const page2   = document.getElementById("page2");
+  const page1 = document.getElementById("page1");
+  const page2 = document.getElementById("page2");
   const page1Yes = document.getElementById("page1Yes");
-  const noBtn   = document.getElementById("noBtn");
-  const yesBtn  = document.getElementById("yesBtn");
-  const bubble  = document.getElementById("bubble");
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const bubble = document.getElementById("bubble");
 
   let noClicks = 0;
   let chaosMode = false;
@@ -135,17 +164,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const messages = [
     "I'm gonna assume you didn't read the options correctly.",
     "Maybe you should put on your glasses and then choose again.",
-    "Seriously, read again and choose – we have time.",
+    "Seriously, read again and choose — we have time.",
     "You leave me no other choice."
   ];
 
-  // PAGE 1 → PAGE 2
   page1Yes.addEventListener("click", () => {
     page1.classList.add("hidden");
     page2.classList.remove("hidden");
   });
 
-  // NO BUTTON LOGIC
   noBtn.addEventListener("click", () => {
     bubble.innerText = messages[Math.min(noClicks, messages.length - 1)];
     bubble.style.display = "block";
@@ -167,7 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
     noBtn.style.transform = `translate(${x}px, ${y}px)`;
   });
 
-  // YES FINAL SCREEN
   yesBtn.addEventListener("click", () => {
     document.body.innerHTML = `
       <div style="
