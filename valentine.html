@@ -1,0 +1,111 @@
+<!Project html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hey You 💖</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .card {
+    background: white;
+    padding: 35px 25px;
+    border-radius: 20px;
+    text-align: center;
+    width: 85%;
+    max-width: 360px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+
+  h1 {
+    color: #e63946;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 16px;
+    color: #444;
+  }
+
+  .buttons {
+    margin-top: 25px;
+    position: relative;
+    height: 120px;
+  }
+
+  button {
+    padding: 12px 22px;
+    font-size: 16px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+  }
+
+  .yes {
+    background: #e63946;
+    color: white;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+  }
+
+  .no {
+    background: #f1f1f1;
+    color: #333;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+</style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>Hey 👀</h1>
+    <p>I was wondering something…</p>
+    <h2>Will you be my Valentine? 💘</h2>
+
+    <div class="buttons">
+      <button class="no" ontouchstart="moveNo()">No 🙈</button>
+      <button class="yes" onclick="yes()">Yes 💖</button>
+    </div>
+  </div>
+
+<script>
+  function moveNo() {
+    const btn = document.querySelector('.no');
+    const x = Math.random() * 200 - 100;
+    const y = Math.random() * 80;
+    btn.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  function yes() {
+    document.body.innerHTML = `
+      <div style="
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        flex-direction:column;
+        background:linear-gradient(135deg,#ff758c,#ff7eb3);
+        color:white;
+        text-align:center;
+        font-family:-apple-system,sans-serif;">
+        <h1>YAY 💕</h1>
+        <p style="font-size:20px">You just made my day 😊</p>
+      </div>
+    `;
+  }
+</script>
+</body>
+</html>
