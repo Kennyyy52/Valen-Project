@@ -40,20 +40,33 @@
     cursor: pointer;
   }
 
-  .page {
-    position: relative;
-    z-index: 1;
-  }
-
-  .hidden {
-    display: none;
-    pointer-events: none;
-  }
+  .page { position: relative; }
+  .hidden { display: none; pointer-events: none; }
 
   .buttons {
     margin-top: 25px;
     position: relative;
     height: 120px;
+  }
+
+  /* --- NO BUTTON (uses CSS variables) --- */
+  .buttons .no {
+    --x: 0px;
+    --y: 0px;
+    --scale: 1;
+
+    position: absolute;
+    background: #f1f1f1;
+    color: #333;
+    top: 0;
+    left: 50%;
+
+    transform:
+      translateX(-50%)
+      translate(var(--x), var(--y))
+      scale(var(--scale));
+
+    transition: transform 0.25s ease;
   }
 
   .buttons .yes {
@@ -65,17 +78,10 @@
     bottom: 0;
   }
 
-  .buttons .no {
-    position: absolute;
-    background: #f1f1f1;
-    color: #333;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  /* SIDE CHAT BUBBLE */
+  /* --- SIDE BUBBLE (also uses CSS variables) --- */
   .bubble {
+    --scale: 1;
+
     position: absolute;
     right: -220px;
     top: 30px;
@@ -88,37 +94,33 @@
     line-height: 1.4;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     display: none;
-    transform: rotate(-1.5deg);
+
+    transform: scale(var(--scale)) rotate(-1.5deg);
+    transition: transform 0.25s ease, font-weight 0.25s ease;
   }
 
-  /* Bubble tail */
   .bubble::before {
     content: "";
     position: absolute;
     left: -8px;
     top: 20px;
-    width: 0;
-    height: 0;
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
     border-right: 8px solid #f8f8f8;
   }
 
-  /* Mobile fallback */
   @media (max-width: 600px) {
     .bubble {
       right: 50%;
-      transform: translateX(50%) rotate(-1.5deg);
       top: -70px;
+      transform: translateX(50%) scale(var(--scale)) rotate(-1.5deg);
     }
 
     .bubble::before {
       left: 50%;
       top: 100%;
       transform: translateX(-50%);
-      border-right: none;
-      border-left: 8px solid transparent;
-      border-right: 8px solid transparent;
+      border: none;
       border-top: 8px solid #f8f8f8;
     }
   }
@@ -160,6 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let noClicks = 0;
   let chaosMode = false;
+  let noScale = 1;
 
   const messages = [
     "I'm gonna assume you didn't read the options correctly.",
@@ -177,6 +180,15 @@ document.addEventListener("DOMContentLoaded", () => {
     bubble.innerText = messages[Math.min(noClicks, messages.length - 1)];
     bubble.style.display = "block";
 
+    // Bubble grows & gets bolder
+    const bubbleScale = 1 + noClicks * 0.2;
+    bubble.style.setProperty("--scale", bubbleScale);
+    bubble.style.fontWeight = noClicks >= 2 ? "600" : "400";
+
+    // No button shrinks
+    noScale = Math.max(0.45, noScale - 0.15);
+    noBtn.style.setProperty("--scale", noScale);
+
     if (noClicks >= 3) chaosMode = true;
     noClicks++;
   });
@@ -184,14 +196,11 @@ document.addEventListener("DOMContentLoaded", () => {
   noBtn.addEventListener("mouseover", () => {
     if (!chaosMode) return;
 
-    bubble.innerText = messages[3];
-    bubble.style.display = "block";
-
     const x = Math.random() * 200 - 100;
     const y = Math.random() * 80;
 
-    noBtn.style.transition = "transform 0.2s ease";
-    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+    noBtn.style.setProperty("--x", `${x}px`);
+    noBtn.style.setProperty("--y", `${y}px`);
   });
 
   yesBtn.addEventListener("click", () => {
