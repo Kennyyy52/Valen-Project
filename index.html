@@ -24,21 +24,12 @@
     width: 85%;
     max-width: 360px;
     box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    position: relative;
   }
 
-  h1 {
-    color: #e63946;
-    margin-bottom: 10px;
-  }
-
-  h2 {
-    color: #222;
-  }
-
-  p {
-    font-size: 16px;
-    color: #444;
-  }
+  h1 { color: #e63946; }
+  h2 { color: #222; }
+  p { color: #444; font-size: 16px; }
 
   button {
     padding: 12px 22px;
@@ -71,71 +62,80 @@
     left: 50%;
     transform: translateX(-50%);
   }
+
+  /* Speech bubble */
+  .bubble {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    max-width: 280px;
+    display: none;
+  }
 </style>
 </head>
 
 <body>
-  <div class="card">
+<div class="card">
 
-    <!-- PAGE 1 -->
-    <div id="page1">
-      <h1>Hey 👀</h1>
-      <p>I was wondering something…</p>
-      <button id="page1Yes" style="margin-top:20px;">Yes?</button>
-    </div>
-
-    <!-- PAGE 2 -->
-    <div id="page2" style="display:none;">
-      <h2>Will you be my Valentine? 💘</h2>
-
-      <div class="buttons">
-        <button class="no" id="noBtn">No 🙈</button>
-        <button class="yes" id="yesBtn">Yes 💖</button>
-      </div>
-    </div>
-
+  <!-- PAGE 1 -->
+  <div id="page1">
+    <h1>Hey 👀</h1>
+    <p>I was wondering something…</p>
+    <button id="page1Yes" style="margin-top:20px;">Yes?</button>
   </div>
 
+  <!-- PAGE 2 -->
+  <div id="page2" style="display:none;">
+    <div id="bubble" class="bubble"></div>
+    <h2>Will you be my Valentine? 💘</h2>
+
+    <div class="buttons">
+      <button class="no" id="noBtn">No 🙈</button>
+      <button class="yes" id="yesBtn">Yes 💖</button>
+    </div>
+  </div>
+
+</div>
+
 <script>
-  // PAGE SWITCH
   const page1 = document.getElementById("page1");
   const page2 = document.getElementById("page2");
+  const noBtn = document.getElementById("noBtn");
+  const bubble = document.getElementById("bubble");
+
+  let noClicks = 0;
+  let chaosMode = false;
+
+  const messages = [
+    "I'm gonna assume you didn't read the options correctly.",
+    "Maybe you should put on your glasses and then choose again.",
+    "Seriously, read again and choose – we have time.",
+    "You leave me no other choice."
+  ];
 
   document.getElementById("page1Yes").addEventListener("click", () => {
     page1.style.display = "none";
     page2.style.display = "block";
   });
 
-  // NO BUTTON RUNS AWAY
-  const noBtn = document.getElementById("noBtn");
-  noBtn.addEventListener("mouseover", moveNo);
-  noBtn.addEventListener("click", moveNo);
+  noBtn.addEventListener("click", () => {
+    bubble.innerText = messages[Math.min(noClicks, messages.length - 1)];
+    bubble.style.display = "block";
 
-  function moveNo() {
-    const x = Math.random() * 200 - 100;
-    const y = Math.random() * 80;
-    noBtn.style.transition = "transform 0.2s ease";
-    noBtn.style.transform = `translate(${x}px, ${y}px)`;
-  }
+    if (noClicks >= 3) {
+      chaosMode = true;
+    }
 
-  // YES BUTTON FINAL SCREEN
-  document.getElementById("yesBtn").addEventListener("click", () => {
-    document.body.innerHTML = `
-      <div style="
-        height:100vh;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        flex-direction:column;
-        background:linear-gradient(135deg,#141e30,#243b55);
-        color:white;
-        text-align:center;
-        font-family:-apple-system,sans-serif;">
-        <h1>Lessfuckinggooooooo !!!</h1>
-        <p style="font-size:20px">Next week gonna be amazeballs 😌</p>
-      </div>
-    `;
+    noClicks++;
   });
-</script>
-</body>
-</html>
+
+  noBtn.addEventListener("mouseover", () => {
+    if (!chaosMode) return;
+
+    const x
