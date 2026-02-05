@@ -28,13 +28,10 @@
     overflow: visible;
   }
 
-  .shake {
-    animation: screenShake 0.3s;
-  }
+  .shake { animation: screenShake 0.35s; }
 
   h1 { color: #e63946; }
   h2 { color: #222; }
-  p  { color: #444; font-size: 16px; }
 
   button {
     padding: 12px 22px;
@@ -44,15 +41,12 @@
     cursor: pointer;
   }
 
-  .hidden {
-    display: none;
-    pointer-events: none;
-  }
+  .hidden { display: none; pointer-events: none; }
 
   .buttons {
     margin-top: 25px;
     position: relative;
-    height: 120px;
+    height: 150px;
   }
 
   /* YES BUTTON */
@@ -63,41 +57,38 @@
     color: white;
     left: 50%;
     bottom: 0;
-    transform: translateX(-50%) scale(var(--scale));
+    transform: translate(-50%, 0) scale(var(--scale));
     animation: heartbeat 1.8s infinite ease-in-out;
+    transition:
+      bottom 1.2s cubic-bezier(.22,.61,.36,1),
+      transform 1.2s cubic-bezier(.22,.61,.36,1);
+  }
+
+  .yes.centered {
+    bottom: 50%;
+    transform: translate(-50%, 50%) scale(var(--scale));
+    animation: finalPulse 1.5s infinite ease-in-out;
   }
 
   /* NO BUTTON */
   .no {
-    --x: 0px;
-    --y: 0px;
     --scale: 1;
-
     position: absolute;
     background: #f1f1f1;
     color: #333;
     top: 0;
     left: 50%;
-    transform:
-      translateX(-50%)
-      translate(var(--x), var(--y))
-      scale(var(--scale));
-    transition: transform 0.25s ease, opacity 0.3s ease;
+    transform: translateX(-50%) scale(var(--scale));
+    transition: transform 0.35s ease, opacity 0.35s ease;
   }
 
   .no.broken {
-    opacity: 0.3;
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
     pointer-events: none;
   }
 
-  .crack {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    font-size: 20px;
-  }
-
-  /* SIDE BUBBLE */
+  /* BUBBLE */
   .bubble {
     --scale: 1;
     position: absolute;
@@ -105,13 +96,13 @@
     top: 30px;
     width: 200px;
     background: #f8f8f8;
-    color: #333;
     padding: 12px 14px;
     border-radius: 14px;
     font-size: 14px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     display: none;
     transform: scale(var(--scale)) rotate(-1.5deg);
+    transition: transform 0.3s ease, font-weight 0.3s ease;
   }
 
   /* STICKMAN */
@@ -121,6 +112,7 @@
     bottom: -10px;
     width: 40px;
     height: 80px;
+    opacity: 1;
     display: none;
   }
 
@@ -137,6 +129,7 @@
     height: 30px;
     background: #222;
     margin: 0 auto;
+    transform-origin: top center;
   }
 
   .arm {
@@ -156,9 +149,15 @@
     margin: 0 auto;
   }
 
+  /* ANIMATIONS */
   @keyframes walkIn {
     from { left: -80px; }
     to { left: 20px; }
+  }
+
+  @keyframes walkOut {
+    from { left: 20px; opacity: 1; }
+    to { left: 120%; opacity: 0; }
   }
 
   @keyframes hammer {
@@ -167,10 +166,22 @@
     100% { transform: rotate(0deg); }
   }
 
+  @keyframes bow {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(25deg); }
+    100% { transform: rotate(0deg); }
+  }
+
   @keyframes heartbeat {
-    0% { transform: translateX(-50%) scale(var(--scale)); }
-    50% { transform: translateX(-50%) scale(calc(var(--scale) + 0.05)); }
-    100% { transform: translateX(-50%) scale(var(--scale)); }
+    0% { transform: translate(-50%,0) scale(var(--scale)); }
+    50% { transform: translate(-50%,0) scale(calc(var(--scale) + 0.05)); }
+    100% { transform: translate(-50%,0) scale(var(--scale)); }
+  }
+
+  @keyframes finalPulse {
+    0% { box-shadow: 0 0 0 rgba(230,57,70,0.4); }
+    50% { box-shadow: 0 0 28px rgba(230,57,70,0.85); }
+    100% { box-shadow: 0 0 0 rgba(230,57,70,0.4); }
   }
 
   @keyframes screenShake {
@@ -186,14 +197,12 @@
 <body>
 <div class="card" id="card">
 
-  <!-- PAGE 1 -->
   <div id="page1">
     <h1>Hey 👀</h1>
     <p>I was wondering something…</p>
-    <button id="page1Yes" style="margin-top:20px;">Yes?</button>
+    <button id="page1Yes">Yes?</button>
   </div>
 
-  <!-- PAGE 2 -->
   <div id="page2" class="hidden">
     <div id="bubble" class="bubble"></div>
 
@@ -206,7 +215,7 @@
 
     <div id="stickman" class="stickman">
       <div class="head"></div>
-      <div class="body"></div>
+      <div class="body" id="body"></div>
       <div class="arm" id="arm"></div>
       <div class="leg"></div>
     </div>
@@ -216,14 +225,15 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  const page1Yes = document.getElementById("page1Yes");
   const page1 = document.getElementById("page1");
   const page2 = document.getElementById("page2");
-  const page1Yes = document.getElementById("page1Yes");
   const noBtn = document.getElementById("noBtn");
   const yesBtn = document.getElementById("yesBtn");
   const bubble = document.getElementById("bubble");
   const stickman = document.getElementById("stickman");
   const arm = document.getElementById("arm");
+  const body = document.getElementById("body");
   const card = document.getElementById("card");
 
   let noClicks = 0;
@@ -239,39 +249,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
   page1Yes.onclick = () => {
     page1.classList.add("hidden");
-    page2.classList.remove("hidden"); // 🔑 THIS FIXES EVERYTHING
+    page2.classList.remove("hidden");
   };
 
   noBtn.onclick = () => {
     bubble.style.display = "block";
     bubble.innerText = messages[Math.min(noClicks, 3)];
-    bubble.style.setProperty("--scale", 1 + noClicks * 0.2);
-    bubble.style.fontWeight = noClicks >= 2 ? "600" : "400";
+    bubble.style.setProperty("--scale", 1 + noClicks * 0.18);
 
-    noScale = Math.max(0.4, noScale - 0.15);
+    noScale = noScale - (noScale - 0.35) * 0.4;
     noBtn.style.setProperty("--scale", noScale);
 
-    yesScale = Math.min(1.7, yesScale + 0.12);
+    yesScale = Math.min(1.8, yesScale + 0.12);
     yesBtn.style.setProperty("--scale", yesScale);
 
     if (noClicks === 3) {
       stickman.style.display = "block";
-      stickman.style.animation = "walkIn 0.8s forwards";
+      stickman.style.animation = "walkIn 1.2s forwards";
 
       setTimeout(() => {
-        arm.style.animation = "hammer 0.3s";
+        arm.style.animation = "hammer 0.4s";
         card.classList.add("shake");
-
-        const crack = document.createElement("div");
-        crack.className = "crack";
-        crack.innerText = "💥";
-        noBtn.appendChild(crack);
-
         noBtn.classList.add("broken");
         bubble.innerText = "Good. Now choose wisely.";
 
-        setTimeout(() => card.classList.remove("shake"), 300);
-      }, 900);
+        setTimeout(() => body.style.animation = "bow 0.6s", 500);
+
+        setTimeout(() => {
+          stickman.style.animation = "walkOut 1.6s forwards";
+          yesBtn.classList.add("centered");
+        }, 1100);
+
+        setTimeout(() => stickman.style.display = "none", 3000);
+        setTimeout(() => card.classList.remove("shake"), 400);
+      }, 1100);
     }
 
     noClicks++;
@@ -286,12 +297,10 @@ document.addEventListener("DOMContentLoaded", () => {
         align-items:center;
         flex-direction:column;
         background:linear-gradient(135deg,#141e30,#243b55);
-        color:white;
-        font-family:-apple-system,sans-serif;">
+        color:white;">
         <h1>Lessfuckinggooooooo !!!</h1>
-        <p style="font-size:20px">Next week gonna be amazeballs 😌</p>
-      </div>
-    `;
+        <p>Next week gonna be amazeballs 😌</p>
+      </div>`;
   };
 });
 </script>
