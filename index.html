@@ -44,7 +44,10 @@
     cursor: pointer;
   }
 
-  .hidden { display: none; pointer-events: none; }
+  .hidden {
+    display: none;
+    pointer-events: none;
+  }
 
   .buttons {
     margin-top: 25px;
@@ -52,7 +55,7 @@
     height: 120px;
   }
 
-  /* YES */
+  /* YES BUTTON */
   .yes {
     --scale: 1;
     position: absolute;
@@ -64,7 +67,7 @@
     animation: heartbeat 1.8s infinite ease-in-out;
   }
 
-  /* NO */
+  /* NO BUTTON */
   .no {
     --x: 0px;
     --y: 0px;
@@ -94,7 +97,7 @@
     font-size: 20px;
   }
 
-  /* BUBBLE */
+  /* SIDE BUBBLE */
   .bubble {
     --scale: 1;
     position: absolute;
@@ -213,9 +216,9 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const page1Yes = document.getElementById("page1Yes");
   const page1 = document.getElementById("page1");
   const page2 = document.getElementById("page2");
+  const page1Yes = document.getElementById("page1Yes");
   const noBtn = document.getElementById("noBtn");
   const yesBtn = document.getElementById("yesBtn");
   const bubble = document.getElementById("bubble");
@@ -235,8 +238,8 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   page1Yes.onclick = () => {
-    page1.style.display = "none";
-    page2.style.display = "block";
+    page1.classList.add("hidden");
+    page2.classList.remove("hidden"); // 🔑 THIS FIXES EVERYTHING
   };
 
   noBtn.onclick = () => {
