@@ -28,6 +28,10 @@
     overflow: visible;
   }
 
+  .shake {
+    animation: screenShake 0.3s;
+  }
+
   h1 { color: #e63946; }
   h2 { color: #222; }
   p  { color: #444; font-size: 16px; }
@@ -40,19 +44,7 @@
     cursor: pointer;
   }
 
-  /* PAGE TRANSITIONS */
-  .page {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.35s ease, transform 0.35s ease;
-  }
-
-  .hidden {
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-    display: none;
-  }
+  .hidden { display: none; pointer-events: none; }
 
   .buttons {
     margin-top: 25px;
@@ -60,19 +52,20 @@
     height: 120px;
   }
 
-  /* YES BUTTON */
-  .buttons .yes {
+  /* YES */
+  .yes {
+    --scale: 1;
     position: absolute;
     background: #e63946;
     color: white;
     left: 50%;
-    transform: translateX(-50%);
     bottom: 0;
+    transform: translateX(-50%) scale(var(--scale));
     animation: heartbeat 1.8s infinite ease-in-out;
   }
 
-  /* NO BUTTON (CSS VARIABLES) */
-  .buttons .no {
+  /* NO */
+  .no {
     --x: 0px;
     --y: 0px;
     --scale: 1;
@@ -82,19 +75,28 @@
     color: #333;
     top: 0;
     left: 50%;
-
     transform:
       translateX(-50%)
       translate(var(--x), var(--y))
       scale(var(--scale));
-
-    transition: transform 0.25s ease;
+    transition: transform 0.25s ease, opacity 0.3s ease;
   }
 
-  /* SIDE CHAT BUBBLE */
+  .no.broken {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .crack {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 20px;
+  }
+
+  /* BUBBLE */
   .bubble {
     --scale: 1;
-
     position: absolute;
     right: -220px;
     top: 30px;
@@ -104,89 +106,106 @@
     padding: 12px 14px;
     border-radius: 14px;
     font-size: 14px;
-    line-height: 1.4;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     display: none;
-
     transform: scale(var(--scale)) rotate(-1.5deg);
-    animation: bubblePop 0.3s ease-out;
-    transition: transform 0.25s ease, font-weight 0.25s ease;
   }
 
-  .bubble::before {
-    content: "";
+  /* STICKMAN */
+  .stickman {
     position: absolute;
-    left: -8px;
-    top: 20px;
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
-    border-right: 8px solid #f8f8f8;
+    left: -80px;
+    bottom: -10px;
+    width: 40px;
+    height: 80px;
+    display: none;
   }
 
-  @media (max-width: 600px) {
-    .bubble {
-      right: 50%;
-      top: -70px;
-      transform: translateX(50%) scale(var(--scale)) rotate(-1.5deg);
-    }
-
-    .bubble::before {
-      left: 50%;
-      top: 100%;
-      transform: translateX(-50%);
-      border: none;
-      border-top: 8px solid #f8f8f8;
-    }
+  .head {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #222;
+    border-radius: 50%;
+    margin: 0 auto;
   }
 
-  /* ANIMATIONS */
-  @keyframes bubblePop {
-    0% {
-      transform: scale(0.6) rotate(-1.5deg);
-      opacity: 0;
-    }
-    70% {
-      transform: scale(1.05) rotate(-1.5deg);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(var(--scale)) rotate(-1.5deg);
-    }
+  .body {
+    width: 2px;
+    height: 30px;
+    background: #222;
+    margin: 0 auto;
+  }
+
+  .arm {
+    width: 20px;
+    height: 2px;
+    background: #222;
+    position: absolute;
+    top: 35px;
+    right: -10px;
+    transform-origin: left center;
+  }
+
+  .leg {
+    width: 2px;
+    height: 20px;
+    background: #222;
+    margin: 0 auto;
+  }
+
+  @keyframes walkIn {
+    from { left: -80px; }
+    to { left: 20px; }
+  }
+
+  @keyframes hammer {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(-60deg); }
+    100% { transform: rotate(0deg); }
   }
 
   @keyframes heartbeat {
-    0% { transform: translateX(-50%) scale(1); }
-    50% { transform: translateX(-50%) scale(1.05); }
-    100% { transform: translateX(-50%) scale(1); }
+    0% { transform: translateX(-50%) scale(var(--scale)); }
+    50% { transform: translateX(-50%) scale(calc(var(--scale) + 0.05)); }
+    100% { transform: translateX(-50%) scale(var(--scale)); }
   }
 
-  @keyframes panic {
-    0%   { transform: translateX(-50%) scale(var(--scale)); }
-    25%  { transform: translateX(-50%) rotate(-2deg) scale(var(--scale)); }
-    50%  { transform: translateX(-50%) rotate(2deg) scale(var(--scale)); }
-    100% { transform: translateX(-50%) scale(var(--scale)); }
+  @keyframes screenShake {
+    0% { transform: translate(0); }
+    25% { transform: translate(-4px, 2px); }
+    50% { transform: translate(4px, -2px); }
+    75% { transform: translate(-3px, 2px); }
+    100% { transform: translate(0); }
   }
 </style>
 </head>
 
 <body>
-<div class="card">
+<div class="card" id="card">
 
   <!-- PAGE 1 -->
-  <div id="page1" class="page">
+  <div id="page1">
     <h1>Hey 👀</h1>
     <p>I was wondering something…</p>
     <button id="page1Yes" style="margin-top:20px;">Yes?</button>
   </div>
 
   <!-- PAGE 2 -->
-  <div id="page2" class="page hidden">
+  <div id="page2" class="hidden">
     <div id="bubble" class="bubble"></div>
+
     <h2>Will you be my Valentine? 💘</h2>
 
     <div class="buttons">
       <button id="noBtn" class="no">No 🙈</button>
       <button id="yesBtn" class="yes">Yes 💖</button>
+    </div>
+
+    <div id="stickman" class="stickman">
+      <div class="head"></div>
+      <div class="body"></div>
+      <div class="arm" id="arm"></div>
+      <div class="leg"></div>
     </div>
   </div>
 
@@ -194,17 +213,19 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-
+  const page1Yes = document.getElementById("page1Yes");
   const page1 = document.getElementById("page1");
   const page2 = document.getElementById("page2");
-  const page1Yes = document.getElementById("page1Yes");
   const noBtn = document.getElementById("noBtn");
   const yesBtn = document.getElementById("yesBtn");
   const bubble = document.getElementById("bubble");
+  const stickman = document.getElementById("stickman");
+  const arm = document.getElementById("arm");
+  const card = document.getElementById("card");
 
   let noClicks = 0;
-  let chaosMode = false;
   let noScale = 1;
+  let yesScale = 1;
 
   const messages = [
     "I'm gonna assume you didn't read the options correctly.",
@@ -213,43 +234,47 @@ document.addEventListener("DOMContentLoaded", () => {
     "You leave me no other choice."
   ];
 
-  page1Yes.addEventListener("click", () => {
-    page1.classList.add("hidden");
-    page2.classList.remove("hidden");
-  });
+  page1Yes.onclick = () => {
+    page1.style.display = "none";
+    page2.style.display = "block";
+  };
 
-  noBtn.addEventListener("click", () => {
-    bubble.innerText = messages[Math.min(noClicks, messages.length - 1)];
+  noBtn.onclick = () => {
     bubble.style.display = "block";
-
-    const bubbleScale = 1 + noClicks * 0.2;
-    bubble.style.setProperty("--scale", bubbleScale);
+    bubble.innerText = messages[Math.min(noClicks, 3)];
+    bubble.style.setProperty("--scale", 1 + noClicks * 0.2);
     bubble.style.fontWeight = noClicks >= 2 ? "600" : "400";
 
-    noScale = Math.max(0.45, noScale - 0.15);
+    noScale = Math.max(0.4, noScale - 0.15);
     noBtn.style.setProperty("--scale", noScale);
 
-    if (noClicks >= 3) chaosMode = true;
+    yesScale = Math.min(1.7, yesScale + 0.12);
+    yesBtn.style.setProperty("--scale", yesScale);
+
+    if (noClicks === 3) {
+      stickman.style.display = "block";
+      stickman.style.animation = "walkIn 0.8s forwards";
+
+      setTimeout(() => {
+        arm.style.animation = "hammer 0.3s";
+        card.classList.add("shake");
+
+        const crack = document.createElement("div");
+        crack.className = "crack";
+        crack.innerText = "💥";
+        noBtn.appendChild(crack);
+
+        noBtn.classList.add("broken");
+        bubble.innerText = "Good. Now choose wisely.";
+
+        setTimeout(() => card.classList.remove("shake"), 300);
+      }, 900);
+    }
+
     noClicks++;
-  });
+  };
 
-  noBtn.addEventListener("mouseover", () => {
-    if (!chaosMode) return;
-
-    bubble.innerText = messages[3];
-    bubble.style.display = "block";
-
-    noBtn.style.animation = "panic 0.2s";
-    setTimeout(() => noBtn.style.animation = "", 200);
-
-    const x = Math.random() * 200 - 100;
-    const y = Math.random() * 80;
-
-    noBtn.style.setProperty("--x", `${x}px`);
-    noBtn.style.setProperty("--y", `${y}px`);
-  });
-
-  yesBtn.addEventListener("click", () => {
+  yesBtn.onclick = () => {
     document.body.innerHTML = `
       <div style="
         height:100vh;
@@ -259,14 +284,12 @@ document.addEventListener("DOMContentLoaded", () => {
         flex-direction:column;
         background:linear-gradient(135deg,#141e30,#243b55);
         color:white;
-        text-align:center;
         font-family:-apple-system,sans-serif;">
         <h1>Lessfuckinggooooooo !!!</h1>
         <p style="font-size:20px">Next week gonna be amazeballs 😌</p>
       </div>
     `;
-  });
-
+  };
 });
 </script>
 </body>
